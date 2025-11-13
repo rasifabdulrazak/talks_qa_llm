@@ -1,0 +1,14 @@
+fastapi #framework
+uvicorn #webserver
+sqlalchemy #orm
+alembic #migration
+psycopg2-binary #pg_connector
+python-dotenv #env_access
+pydantic[email] #validation
+pydantic-settings #base_configs
+PyJWT #authentication
+pwdlib[argon2] #hashing_password
+redis #cache
+pdfplumber #pdf_to_text_convertor
+python-multipart #accept_files
+openai #llm_model
