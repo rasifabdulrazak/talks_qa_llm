@@ -1,0 +1,37 @@
+# Python-specific ignores
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Editor/IDE specific ignores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts and temporary files
+dist/
+build/
+*.egg-info/
+.coverage.*
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Version control ignores
+.git/
+.gitignore
+
+# Logs and data files
+*.log
+*.sqlite3
+*.db
+
+# # Docker-specific ignores (if applicable)
+# docker-compose.yml
+# docker-compose.*.yml
+# Dockerfile
