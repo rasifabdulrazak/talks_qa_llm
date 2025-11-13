@@ -1,16 +1,17 @@
-🤖 PDF Questionear
-A production-ready FastAPI application for PDF document question-answering using Large Language Models (LLMs). Upload a PDF, ask questions, and get intelligent answers based on the document content.
+# 🤖 PDF Questionear
+
+- A production-ready FastAPI application for PDF document question-answering using Large Language Models (LLMs). Upload a PDF, ask questions, and get intelligent answers based on the document content.
 
 ✨ Features
 ===================
-🔐 JWT Authentication - Secure user registration and login
-📄 PDF Processing - Extract text from PDF documents
-🤖 LLM Integration - Support for OpenAI GPT and Anthropic Claude
-⚡ Smart Caching - Fast responses for repeated questions
-🔄 Streaming Support - Real-time streaming responses
-🐳 Docker Ready - Containerized deployment with Docker Compose
-🗄️ PostgreSQL - Reliable database with Alembic migrations
-📊 API Documentation - Auto-generated Swagger UI
+- 🔐 JWT Authentication - Secure user registration and login
+- 📄 PDF Processing - Extract text from PDF documents
+- 🤖 LLM Integration - Support for OpenAI GPT and Anthropic Claude
+- ⚡ Smart Caching - Fast responses for repeated questions
+- 🔄 Streaming Support - Real-time streaming responses
+- 🐳 Docker Ready - Containerized deployment with Docker Compose
+- 🗄️ PostgreSQL - Reliable database with Alembic migrations
+- 📊 API Documentation - Auto-generated Swagger UI
 
 🏗️ Architecture
 ===================
@@ -71,7 +72,7 @@ Option 1: Docker Setup (Recommended) ⭐
 1. Clone the Repository
 
 ```console
-git clone https://github.com/yourusername/talks_qa_llm.git
+git clone https://github.com/rasifabdulrazak/talks_qa_llm
 cd talks_qa_llm
 ```
 
@@ -104,3 +105,43 @@ docker-compose exec app alembic revision --autogenerate -m "Initial migration"
 docker-compose exec app alembic upgrade head
 ```
 
+6. Access the API
+
+- API Documentation: http://localhost:8000/docs
+- Alternative Docs: http://localhost:8000/redoc
+- Health Check: http://localhost:8000/system-check
+
+
+Option 2: Local Development Setup
+
+1. Create Virtual Environment
+```bash
+python -m venv venv
+
+# On Linux/Mac
+source venv/bin/activate
+
+# On Windows
+venv\Scripts\activate
+```
+
+2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+3. Install and Setup PostgreSQL URL in .env
+```bash
+DATABASE_URL=postgresql://your_username:your_password@your_host:your_port/db_name
+```
+
+4. Run Migrations
+```bash
+alembic revision --autogenerate -m "Initial migration"
+alembic upgrade head
+```
+
+5. Start the Application
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
