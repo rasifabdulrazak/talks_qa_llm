@@ -258,7 +258,6 @@ Response:
 
 🔗 My Essential Links
 ====================
-```bash
 🌐 Portfolio
 
 👉 https://portfolio.pyrasif.com
@@ -270,4 +269,3 @@ Response:
 💻 GitHub
 
 👉 https://github.com/rasifabdulrazak
-```
