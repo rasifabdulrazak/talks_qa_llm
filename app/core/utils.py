@@ -1,7 +1,10 @@
 import pdfplumber
+import json
+from datetime import datetime
 from io import BytesIO
 from openai import OpenAI
 from app.core.config import settings
+from fastapi import UploadFile, HTTPException, status
 
 class PDFExtractor:
 
@@ -26,16 +29,21 @@ class PDFExtractor:
     def extract_text(cls, file_content: bytes) -> str:
         """Extract text"""
         text = cls.extract_text_pdfplumber(file_content)
-        if not text:
-            raise ValueError("Could not extract text from PDF. The PDF might be empty, scanned, or corrupted.")
+        if not text or len(text) < 50:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not extract sufficient text from PDF. The document might be empty or consist of images only."
+            )
         return text
     
     @staticmethod
     def validate_pdf(file) -> bool:
         """Validate if file is a valid PDF"""
-        print(file.filename.endswith('.pdf'))
         if not file.filename.endswith('.pdf'):
-            return False
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only PDF files are allowed. Please upload a file with .pdf extension."
+            )
         return True 
         
         
@@ -147,3 +155,50 @@ class LLMService:
         for chunk in stream:
             if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content
+                
+                
+                
+class CommonUtil:
+    @staticmethod
+    async def validate_pdf_file(file: UploadFile):
+        if not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only PDF files are allowed. Upload a .pdf file."
+            )
+
+        file_bytes = await file.read()
+
+        if len(file_bytes) > settings.MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+                detail=f"File too large! Max size is {settings.MAX_FILE_SIZE / (1024*1024):.0f} MB."
+            )
+
+        return file_bytes
+    
+    @staticmethod
+    def generate_stream_response(llm_service, pdf_text, filename, question):
+        def event_stream():
+            try:
+                metadata = {
+                    "type": "metadata",
+                    "filename": filename,
+                    "question": question,
+                    "extracted_text_length": len(pdf_text),
+                    "timestamp": str(datetime.now())
+                }
+                yield f"data: {json.dumps(metadata)}\n\n"
+
+                # Stream LLM chunks
+                for chunk in llm_service.answer_question(pdf_text, question, stream=True):
+                    yield f"data: {chunk}\n\n"
+
+            except Exception as e:
+                error_data = {
+                    "type": "error",
+                    "message": "An error occurred during streaming."
+                }
+                yield f"data: {json.dumps(error_data)}\n\n"
+
+        return event_stream()
