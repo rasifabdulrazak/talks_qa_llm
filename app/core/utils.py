@@ -201,7 +201,6 @@ class CommonUtil:
                 CacheUtil.set_cached_answer(cache_key, full_answer)
 
             except Exception as e:
-                print(e)
                 error_data = {
                     "type": "error",
                     "message": "An error occurred during streaming."
