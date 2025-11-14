@@ -40,7 +40,6 @@ def blacklist_token(token: str, expires_in: int):
     """
     Blacklist a token by adding it to Redis with an expiry.
     """
-    print(redis_client.keys())
     redis_client.setex(f"blacklist:{token}", expires_in, "blacklisted")
 
 
