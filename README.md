@@ -44,7 +44,6 @@ talks_qa_llm
 │   │   └──utils.py
 │   ├──db
 │   │   ├──__init__.py
-│   │   ├──base.py
 │   │   └──session.py
 │   ├──models
 │   │   ├──__init__.py
@@ -64,6 +63,7 @@ talks_qa_llm
 ├──.dockerignore
 └──.gitignore
 ```
+
 
 
 🚀 Quick Start
@@ -211,7 +211,7 @@ Response:
 }
 ```
 
-4. Return Stream data ,Ask a Question About a PDF Mainly for frontend apps and best User Experience
+4. Return Stream data ,Ask a Question About a PDF ,Will return streaming response which may fine for frontend apps and best User Experience
 ```bash
 curl -X POST "http://localhost:8000/api/bot/ask-stream/" \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
@@ -248,4 +248,26 @@ Response:
 {
   "message": "Successfully logged out. Token has been blacklisted."
 }
+```
+
+📌 Project Summary
+===================
+- This project delivers a robust PDF-based Q&A system powered by an LLM. It provides two authorised endpoints—one for normal responses and one for real-time streaming—offering flexibility between speed and interactivity. The architecture is clean, modular, and production-ready, with clear separation of concerns across services, utilities, and API layers. It ensures reliable PDF extraction, optimized LLM handling, and efficient streaming.
+
+- The system has been tested using multiple models, where gpt-4o-mini provides extremely fast responses (~2 seconds), while gpt-4-turbo offers higher accuracy (~3 seconds). This balance allows developers to choose between speed and precision based on the use case.
+
+🔗 My Essential Links
+====================
+```bash
+🌐 Portfolio
+
+👉 https://portfolio.pyrasif.com
+
+💼 LinkedIn
+
+👉 https://www.linkedin.com/in/mohammed-rasif-056419211
+
+💻 GitHub
+
+👉 https://github.com/rasifabdulrazak
 ```

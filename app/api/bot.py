@@ -1,5 +1,4 @@
 import time
-import json
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from fastapi.responses import StreamingResponse
 from datetime import datetime
@@ -7,7 +6,6 @@ from app.api.deps import get_current_user
 from app.models.user import User
 from app.schema.bot import PDFQuestionResponse
 from app.core.utils import PDFExtractor,LLMService,CommonUtil
-from app.core.config import settings
 
 
 
@@ -30,7 +28,6 @@ async def ask_pdf_question(
     
     try: 
         start_time = time.time()
-    
         file_content = await CommonUtil.validate_pdf_file(file)
         pdf_text = PDFExtractor.extract_text(file_content)
         llm_service = LLMService()
@@ -61,6 +58,7 @@ async def ask_pdf_question(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+        
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -102,11 +100,13 @@ async def ask_pdf_question_stream(
         
     except HTTPException:
         raise
+    
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+        
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
