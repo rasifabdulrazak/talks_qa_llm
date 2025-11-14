@@ -160,13 +160,12 @@ curl -X POST "http://localhost:8000/api/auth/register/" \
 ```
 Response:
 ```json
-json{
+{
   "id": 1,
   "email": "user@example.com",
   "name": "John Doe",
-  "is_active": true,
-  "is_superuser": false,
-  "created_at": "2024-11-14T10:30:00"
+  "created_at": "2024-11-14T10:30:00",
+  "updated_at": null
 }
 ```
 2. Login
@@ -179,8 +178,67 @@ curl -X POST "http://localhost:8000/api/auth/login/" \
 
 Response:
 ```json
-json{
+{
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "token_type": "bearer"
+}
+```
+
+3. Ask a Question About a PDF
+```bash
+curl -X POST "http://localhost:8000/api/bot/ask/" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -F "file=@/path/to/document.pdf" \
+  -F "question=What is this document about?" \
+```
+
+Response:
+```json
+{
+  "question": "What is this document about?",
+  "answer": "This document is a Resume of mohammed Rasif ...",
+  "pdf_filename": "document.pdf",
+  "extracted_text_length": 15420,
+  "processing_time": 2.35,
+  "timestamp": "2024-11-14T10:35:00"
+}
+```
+
+4. Return Stream data ,Ask a Question About a PDF Mainly for frontend apps and best User Experience
+```bash
+curl -X POST "http://localhost:8000/api/bot/ask-stream/" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -F "file=@/path/to/document.pdf" \
+  -F "question=What is this document about?" \
+```
+
+Response:
+```bash
+data: Moh
+
+data: ammed
+
+data:  Ras
+
+data: if
+
+data:  C
+
+data:  has
+etc....
+```
+
+5. Logout
+
+```bash
+curl -X POST "http://localhost:8000/api/auth/logout/" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+```
+
+Response:
+```json
+{
+  "message": "Successfully logged out. Token has been blacklisted."
 }
 ```
