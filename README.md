@@ -109,7 +109,7 @@ docker-compose exec app alembic upgrade head
 
 - API Documentation: http://localhost:8000/docs
 - Alternative Docs: http://localhost:8000/redoc
-- Health Check: http://localhost:8000/system-check
+- Health Check: http://localhost:8000/system-check/
 
 
 Option 2: Local Development Setup

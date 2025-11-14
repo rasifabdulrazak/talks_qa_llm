@@ -47,7 +47,7 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-@app.get("/system-check")
+@app.get("/system-check/")
 def system_route():
     return {"success":"system loads perfectly"}
 
