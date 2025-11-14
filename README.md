@@ -2,11 +2,18 @@
 
 - A production-ready FastAPI application for PDF document question-answering using Large Language Models (LLMs). Upload a PDF, ask questions, and get intelligent answers based on the document content.
 
+📄 Used Models and Reason to use
+===================
+- gpt-4o-mini => Fast response, moderately accurate
+- gpt-4-turbo => Fast Response (but less compared to mini), Accurate response
+- I used gpt-4o-mini and gpt-4-turbo for answering PDF-based questions. The gpt-4o-mini model gives very fast responses—usually around 2.x seconds for the same PDF—while still maintaining good accuracy. In comparison, gpt-4-turbo takes slightly longer, around 3.x seconds, but provides more accurate and reliable answers. Together, they offer a balance between speed and precision depending on the requirement.
+
+
 ✨ Features
 ===================
 - 🔐 JWT Authentication - Secure user registration and login
 - 📄 PDF Processing - Extract text from PDF documents
-- 🤖 LLM Integration - Support for OpenAI GPT and Anthropic Claude
+- 🤖 LLM Integration - Support for OpenAI GPT
 - ⚡ Smart Caching - Fast responses for repeated questions
 - 🔄 Streaming Support - Real-time streaming responses
 - 🐳 Docker Ready - Containerized deployment with Docker Compose
