@@ -1,10 +1,12 @@
 import pdfplumber
+import hashlib
 import json
 from datetime import datetime
 from io import BytesIO
 from openai import OpenAI
 from app.core.config import settings
 from fastapi import UploadFile, HTTPException, status
+from app.core.redis import redis_client
 
 class PDFExtractor:
 
@@ -178,9 +180,10 @@ class CommonUtil:
         return file_bytes
     
     @staticmethod
-    def generate_stream_response(llm_service, pdf_text, filename, question):
+    def generate_stream_response(llm_service, pdf_text, filename, question,cache_key):
         def event_stream():
             try:
+                full_answer = ""
                 metadata = {
                     "type": "metadata",
                     "filename": filename,
@@ -192,9 +195,13 @@ class CommonUtil:
 
                 # Stream LLM chunks
                 for chunk in llm_service.answer_question(pdf_text, question, stream=True):
+                    full_answer += chunk
                     yield f"data: {chunk}\n\n"
+                
+                CacheUtil.set_cached_answer(cache_key, full_answer)
 
             except Exception as e:
+                print(e)
                 error_data = {
                     "type": "error",
                     "message": "An error occurred during streaming."
@@ -202,3 +209,20 @@ class CommonUtil:
                 yield f"data: {json.dumps(error_data)}\n\n"
 
         return event_stream()
+    
+    
+class CacheUtil:
+
+    @staticmethod
+    def generate_key(pdf_text: str, question: str) -> str:
+        """Generate unique cache key based on PDF content + question."""
+        raw = pdf_text + "|" + question.lower().strip()
+        return "pdfqa:" + hashlib.sha256(raw.encode()).hexdigest()
+
+    @staticmethod
+    def get_cached_answer(key: str):
+        return redis_client.get(key)
+
+    @staticmethod
+    def set_cached_answer(key: str, answer: str, ttl: int = 3600):
+        redis_client.set(key, answer, ex=ttl)
