@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-LABEL maintainer = "Rasif"
+LABEL maintainer="Rasif"
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
