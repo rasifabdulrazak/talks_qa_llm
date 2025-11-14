@@ -5,7 +5,8 @@ from datetime import datetime
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.schema.bot import PDFQuestionResponse
-from app.core.utils import PDFExtractor,LLMService,CommonUtil
+from app.core.utils import PDFExtractor,LLMService,CommonUtil,CacheUtil
+
 
 
 
@@ -31,6 +32,20 @@ async def ask_pdf_question(
         file_content = await CommonUtil.validate_pdf_file(file)
         pdf_text = PDFExtractor.extract_text(file_content)
         llm_service = LLMService()
+        
+        # --- CACHE CHECK ---
+        cache_key = CacheUtil.generate_key(pdf_text, question)
+        cached = CacheUtil.get_cached_answer(cache_key)
+        if cached:
+            return PDFQuestionResponse(
+                question=question,
+                answer=cached,
+                pdf_filename=file.filename,
+                extracted_text_length=len(pdf_text),
+                processing_time=round(time.time() - start_time, 2),
+                timestamp=datetime.now()
+            )
+        
         answer = llm_service.answer_question(pdf_text, question)
         
         if answer == "NOT_FOUND":
@@ -38,8 +53,10 @@ async def ask_pdf_question(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="The question is not relevant to the PDF content or cannot be answered based on the document."
             )
-        
+        # --- SAVE TO CACHE ---
+        CacheUtil.set_cached_answer(cache_key, answer)
         processing_time = time.time() - start_time
+        
         
         return PDFQuestionResponse(
             question=question,
@@ -85,12 +102,21 @@ async def ask_pdf_question_stream(
         file_content = await CommonUtil.validate_pdf_file(file)
         pdf_text = PDFExtractor.extract_text(file_content)
         llm_service = LLMService()
+        # --- CACHE CHECK ---
+        cache_key = CacheUtil.generate_key(pdf_text, question)
+        cached = CacheUtil.get_cached_answer(cache_key)
+        
+        if cached:
+            async def cached_stream():
+                yield f"data: {cached}\n\n"
+            return StreamingResponse(cached_stream(), media_type="text/event-stream")
         
         stream = CommonUtil.generate_stream_response(
             llm_service=llm_service,
             pdf_text=pdf_text,
             filename=file.filename,
-            question=question
+            question=question,
+            cache_key=cache_key
         )
         
         return StreamingResponse(
