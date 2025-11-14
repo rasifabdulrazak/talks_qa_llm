@@ -18,8 +18,6 @@ def get_db() -> Generator:
     finally:
         db.close()
         
-        
-
 
 def get_current_user(request: Request, db: Session = Depends(get_db)):
     """
