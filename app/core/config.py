@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     # Redis config
     REDIS_HOST:str
     REDIS_PORT:int
+    REDIS_PASSWORD:str
     
     # LLM config
     MAX_FILE_SIZE: int = 10 * 1024 * 1024
