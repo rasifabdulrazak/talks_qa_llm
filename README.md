@@ -60,7 +60,7 @@ talks_qa_llm
 
 
 🚀 Quick Start
-Prerequisites
+==================
 
 Docker & Docker Compose (recommended)
 Python 3.11+ (for local development)
@@ -144,4 +144,43 @@ alembic upgrade head
 5. Start the Application
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+📖 API Usage
+================
+1. Register a New User
+```bash
+curl -X POST "http://localhost:8000/api/auth/register/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "name": "John Doe",
+    "password": "securepassword123"
+  }'
+```
+Response:
+```json
+json{
+  "id": 1,
+  "email": "user@example.com",
+  "name": "John Doe",
+  "is_active": true,
+  "is_superuser": false,
+  "created_at": "2024-11-14T10:30:00"
+}
+```
+2. Login
+
+```bash
+curl -X POST "http://localhost:8000/api/auth/login/" \
+  -H "Content-Type: application/json" \
+  -d "email=user@example.com&password=securepassword123"
+```
+
+Response:
+```json
+json{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
 ```

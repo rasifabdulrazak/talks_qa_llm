@@ -100,13 +100,16 @@ class LLMService:
 
         **REMEMBER**: Your primary goal is accuracy and relevance. When in doubt, respond with "NOT_FOUND" rather than providing potentially incorrect information."""
 
-    def answer_question(self, pdf_text: str, question: str) -> str:
+    def answer_question(self, pdf_text: str, question: str, stream:bool=False) -> str:
         """Get answer from LLM based on PDF content and question"""
         try:
             system_prompt = self.get_system_prompt(pdf_text)
             
             if self.provider == "openai":
-                return self._answer_with_openai(system_prompt, question)
+                if stream:
+                    return self._answer_with_openai_stream(system_prompt, question)
+                else:
+                    return self._answer_with_openai(system_prompt, question)
             else:
                 raise ValueError(f"Unsupported LLM provider: {self.provider}")
                 
@@ -128,3 +131,19 @@ class LLMService:
         answer = response.choices[0].message.content.strip()
         return answer
     
+    def _answer_with_openai_stream(self, system_prompt: str, question: str):
+        """Stream response using OpenAI realtime completions"""
+        stream = self.client.chat.completions.create(
+            model=settings.LLM_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": question},
+            ],
+            max_tokens=settings.MAX_TOKEN,
+            temperature=settings.TEMPERATURE,
+            stream=True
+        )
+
+        for chunk in stream:
+            if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
