@@ -191,7 +191,7 @@ class CommonUtil:
                     "extracted_text_length": len(pdf_text),
                     "timestamp": str(datetime.now())
                 }
-                yield f"data: {json.dumps(metadata)}\n\n"
+                # yield f"data: {json.dumps(metadata)}\n\n"
 
                 # Stream LLM chunks
                 for chunk in llm_service.answer_question(pdf_text, question, stream=True):
