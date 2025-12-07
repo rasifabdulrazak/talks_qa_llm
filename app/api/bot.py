@@ -77,6 +77,7 @@ async def ask_pdf_question(
         )
         
     except Exception as e:
+        print(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while processing your request. Please try again."
